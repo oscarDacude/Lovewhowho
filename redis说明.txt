@@ -1,0 +1,43 @@
+1、值（value）可以是 字符串(String), 哈希(Map), 列表(list), 集合(sets) 和 有序集合(sorted sets)等类型；
+
+2、在 Java Web 主要有两个应用场景：  存储 缓存 用的数据
+    用和主要的数据，比如用户登录的信息等
+
+3、是否使用可从以下几个方面来考虑：
+	业务数据常用吗？命中率如何？如果命中率很低，就没有必要写入缓存；
+	该业务数据是读操作多，还是写操作多？如果写操作多，频繁需要写入数据库，也没有必要使用缓存；
+	业务数据大小如何？如果要存储几百兆字节的文件，会给缓存带来很大的压力，这样也没有必要；
+
+4、windows下启动  redis-server redis.windows.conf
+   redis-cli.exe 文件，这是 Redis 自带的一个客户端工具，它可以用来连接到我们当前的 Redis 服务器；
+
+5、基本用法
+ 	@Test
+	public void redisTester() {
+		Jedis jedis = new Jedis("localhost", 6379, 100000); //连接
+		try {
+			jedis.set("test", "AAA");	//设置key	
+		} finally {// 关闭连接
+			jedis.close();
+		}
+	}
+6、如果你想使用命名空间p，只需要在Spring的XML配置中增加如下一段声明：
+	<?xmlversion="1.0"encoding="UTF-8"?>
+	<beansxmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p"   //加上这句话
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+7、spring整合redis时  Error creating bean with name 'jedisConnectionFactory
+ 错误原因，jedis客户端版本过高，我换回了 2.9.0 的；
+
+8、新建spring配置
+   eclipse 里 添加文件 xml,简单模版；
+   添加6的那个头消息；beans 
+   在里面添加bean就好了；
+   使用 ApplicationContext context = new ClassPathXmlApplicationContext("spring-config.xml");
+	Student stu = context.getBean("Student", Student.class);
+	RedisTemplate<String, Student> redisTemplate = context.getBean(RedisTemplate.class);
+
+
