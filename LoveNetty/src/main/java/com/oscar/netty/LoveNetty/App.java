@@ -6,8 +6,10 @@ package com.oscar.netty.LoveNetty;
  */
 public class App 
 {
+	
     public static void main( String[] args )
     {
-        System.out.println( "Hello Netty! I'm coming!" );
+        System.out.println( "Hello Netty! I'm coming! What's the testClass?" );
     }
+  
 }
