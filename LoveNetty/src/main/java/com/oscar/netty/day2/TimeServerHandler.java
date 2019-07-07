@@ -1,0 +1,35 @@
+package com.oscar.netty.day2;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+
+public class TimeServerHandler  extends ChannelInboundHandlerAdapter{
+	@Override
+    public void channelActive(final ChannelHandlerContext ctx) { //当一个session于服务器建立连接之后将会触发调用的
+     
+		/* ByteBuf类的方法
+		 * order(ByteOrder endianness)   
+		  Returns a buffer with the specified endianness 
+		  which shares the whole region, indexes, and marks of this buffer.*/
+		final ByteBuf time = ctx.alloc().buffer(4); // 为发送数据分配4byte（int32）的字节数
+        
+        time.writeInt((int) (System.currentTimeMillis() / 1000L + 2208988800L));
+
+        final ChannelFuture f = ctx.writeAndFlush(time); // (3)
+        f.addListener(new ChannelFutureListener() {
+            public void operationComplete(ChannelFuture future) {
+                assert f == future;
+                ctx.close();
+            }
+        }); // (4)
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
