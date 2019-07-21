@@ -1,0 +1,40 @@
+在slave1,slave2,slave3上面搭建zookeeper
+
+1、到zookeeper官网下载zookeeper； zookeeper-3.5.2-alpha.tar.gz
+2、用xshell上传zookeeper-3.4.6.tar.gz到任意一台服务器的目录，并解压zookeeper：
+  cd到你要上传的目录，上传用到rz, 
+  然后cd 到你要解压的目录，解压用tar
+  tar–zxvf zookeeper-x.x.x.tar.gz 
+3、在zookeeper目录下建立data目录，同时将zookeeper目录下conf/zoo_simple.cfg文件复制一份成zoo.cfg
+4、修改zoo.cfg
+   路径部分改成你的路径：dataDir=/usr/zookeeper-3.5.2/data   （我本机master目录和slave不一致。配置时注意）
+   最后加上集群id
+     server.1=slave1:2888:3888
+server.2=slave2:2888:3888
+server.3=slave3:2888:3888
+5、拷贝zookeeper目录到另外两台服务器：
+scp-r/usr/zookeeper-3.5.2 slave2:/usr
+scp-r/usr/zookeeper-3.5.2 slave3:/usr
+  分别在几台服务器的data目录下建立myid文件，其ip对应相应的server.*。
+    这里 server.1的myid内容为1 ，server.2的myid内容为2， server.3的myid为3。
+
+6、启动ZooKeeper集群，在每个节点上分别启动ZooKeeper服务：
+cd/usr/zookeeper-3.4.6/
+bin/zkServer.sh start
+
+7、可以查看ZooKeeper集群的状态，保证集群启动没有问题，分别查看每台服务器的zookeeper状态
+     命令： bin/zkServer.shstatus    
+     查看那些是following那个是leader。
+
+8、配置zookeeper环境变量，可以到处用zkServer
+vi /etc/profile
+export ZOOKEEPER_HOME=/usr/zookeeper-3.5.2
+export PATH=$ZOOKEEPER_HOME/bin:$PATH
+source /etc/profile
+
+9、测试
+./zkCli.sh
+create /hello iloveu
+get /hello //如果有值则说明 zookeeper 运行正常
+
+
